@@ -1,0 +1,3 @@
+ sqlcmd -S tcp:localhost,11433 -U sa -P 'YourStrong!Passw0rd' -C -i affirmations.sql
+ sqlcmd -S tcp:localhost,11433 -U sa -P 'YourStrong!Passw0rd' -C -i library.sql
+ sqlcmd -S tcp:localhost,11433 -U sa -P 'YourStrong!Passw0rd' -C -i university.sql
