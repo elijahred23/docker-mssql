@@ -27,5 +27,6 @@ VALUES
 ('Affirmations.Create', 'Create new affirmations'),
 ('Affirmations.Edit', 'Edit existing affirmations'),
 ('Affirmations.Delete', 'Delete affirmations'),
-('Affirmations.ViewAll', 'View all affirmations including others');
+('Affirmations.ViewAll', 'View all affirmations including others'),
+('Admin.Access', 'Access admin dashboard');
 GO
