@@ -1,0 +1,13 @@
+CREATE TABLE AuditLogs (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NOT NULL,
+    Username NVARCHAR(100) NULL,
+
+    Action NVARCHAR(100) NOT NULL,
+    EntityName NVARCHAR(100) NOT NULL,
+    EntityId INT NULL,
+
+    Details NVARCHAR(MAX) NULL,
+
+    CreatedAt DATETIME2 DEFAULT SYSUTCDATETIME()
+);
