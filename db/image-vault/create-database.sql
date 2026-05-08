@@ -1,0 +1,75 @@
+IF DB_ID('ImageVaultDb') IS NULL
+    CREATE DATABASE ImageVaultDb;
+GO
+
+USE ImageVaultDb;
+GO
+
+IF OBJECT_ID('Images','U') IS NULL
+CREATE TABLE Images (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NOT NULL, -- comes from UsersDb
+    ImageUrl NVARCHAR(MAX) NOT NULL, -- supports both URL + base64
+    Title NVARCHAR(200) NULL,
+    Description NVARCHAR(1000) NULL,
+    IsNSFW BIT NOT NULL DEFAULT 0,
+    CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+
+    -- Optional metadata
+    MimeType NVARCHAR(50) NULL, -- image/png, image/jpeg
+    FileSizeBytes BIGINT NULL
+);
+GO
+
+IF OBJECT_ID('UserSettings','U') IS NULL
+CREATE TABLE UserSettings (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NOT NULL UNIQUE, -- one settings row per user
+    AllowNSFW BIT NOT NULL DEFAULT 0,
+    BlurNSFW BIT NOT NULL DEFAULT 1,
+    CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
+);
+GO
+IF OBJECT_ID('Favorites','U') IS NULL
+CREATE TABLE Favorites (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NOT NULL,
+    ImageId INT NOT NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+
+    CONSTRAINT UQ_User_Image UNIQUE (UserId, ImageId)
+);
+GO
+IF OBJECT_ID('Comments','U') IS NULL
+CREATE TABLE Comments (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NOT NULL,
+    ImageId INT NOT NULL,
+    Content NVARCHAR(1000) NOT NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
+);
+GO
+IF OBJECT_ID('Tags','U') IS NULL
+CREATE TABLE Tags (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Name NVARCHAR(100) NOT NULL UNIQUE,
+    CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME()
+);
+GO
+IF OBJECT_ID('ImageTags','U') IS NULL
+CREATE TABLE ImageTags (
+    ImageId INT NOT NULL,
+    TagId INT NOT NULL,
+    CreatedAt DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+
+    PRIMARY KEY (ImageId, TagId),
+
+    CONSTRAINT FK_ImageTags_Images
+        FOREIGN KEY (ImageId) REFERENCES Images(Id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT FK_ImageTags_Tags
+        FOREIGN KEY (TagId) REFERENCES Tags(Id)
+        ON DELETE CASCADE
+);
+GO
